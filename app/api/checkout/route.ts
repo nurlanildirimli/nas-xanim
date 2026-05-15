@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { requireUser, AuthError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -20,13 +21,22 @@ const checkoutSchema = z.object({
   items: z.array(checkoutItemSchema).min(1),
 });
 
+type CheckoutInput = z.infer<typeof checkoutSchema>;
+type CheckoutItem = CheckoutInput["items"][number];
+type CheckoutProduct = {
+  id: string;
+  price: Prisma.Decimal;
+  stock: number;
+  name: string;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const user = await requireUser(request);
     const input = checkoutSchema.parse(await request.json());
-    const productIds = Array.from(new Set(input.items.map((item) => item.productId)));
+    const productIds = Array.from(new Set(input.items.map((item: CheckoutItem) => item.productId)));
 
-    const products = await prisma.product.findMany({
+    const products: CheckoutProduct[] = await prisma.product.findMany({
       where: {
         id: {
           in: productIds,
@@ -39,7 +49,9 @@ export async function POST(request: NextRequest) {
         name: true,
       },
     });
-    const productMap = new Map(products.map((product) => [product.id, product]));
+    const productMap = new Map<string, CheckoutProduct>(
+      products.map((product: CheckoutProduct) => [product.id, product]),
+    );
 
     for (const item of input.items) {
       const product = productMap.get(item.productId);
@@ -56,7 +68,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const total = input.items.reduce((sum, item) => {
+    const total = input.items.reduce((sum: number, item: CheckoutItem) => {
       const product = productMap.get(item.productId);
       return sum + Number(product?.price ?? 0) * item.quantity;
     }, 0);
@@ -93,7 +105,7 @@ export async function POST(request: NextRequest) {
           note: input.note || null,
           total: total.toFixed(2),
           items: {
-            create: input.items.map((item) => {
+            create: input.items.map((item: CheckoutItem) => {
               const product = productMap.get(item.productId);
 
               return {
