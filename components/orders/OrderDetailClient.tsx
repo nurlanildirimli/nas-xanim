@@ -16,6 +16,7 @@ import type { SerializedOrder } from "@/lib/orders/serializers";
 type OrderDetailClientProps = {
   orderId: string;
 };
+type OrderDetailItem = SerializedOrder["items"][number];
 
 function shortOrderId(id: string) {
   return `#${id.slice(-8).toUpperCase()}`;
@@ -130,7 +131,7 @@ export function OrderDetailClient({ orderId }: OrderDetailClientProps) {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {order.items.map((item) => (
+              {order.items.map((item: OrderDetailItem) => (
                 <div key={item.id}>
                   <div className="grid grid-cols-[72px_1fr] gap-3">
                     <div className="relative aspect-square overflow-hidden rounded-md bg-secondary">
