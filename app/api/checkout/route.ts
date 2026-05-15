@@ -30,6 +30,7 @@ type CheckoutProduct = {
   stock: number;
   name: string;
 };
+type PrismaTransaction = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
       return sum + (product?.price.toNumber() ?? 0) * item.quantity;
     }, 0);
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: PrismaTransaction) => {
       for (const item of input.items) {
         const updated = await tx.product.updateMany({
           where: {
