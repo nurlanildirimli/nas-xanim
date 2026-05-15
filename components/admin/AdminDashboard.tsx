@@ -40,6 +40,7 @@ type AdminProduct = {
 };
 
 type AdminOrder = SerializedOrder;
+type AdminOrderItem = AdminOrder["items"][number];
 type OrderStatusValue = "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type CategoryForm = {
@@ -990,7 +991,7 @@ function OrderList({
                   </p>
                   <p className="mt-2 font-semibold text-primary">{aznFormatter.format(order.total)}</p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {order.items.map((item) => (
+                    {order.items.map((item: AdminOrderItem) => (
                       <Link
                         key={item.id}
                         href={`/products/${item.productSlug}`}
@@ -1113,7 +1114,7 @@ function OrderDetailSheet({
               <div className="rounded-md border bg-white p-4">
                 <p className="font-semibold">Məhsullar ({order.items.length})</p>
                 <div className="mt-4 space-y-4">
-                  {order.items.map((item) => (
+                  {order.items.map((item: AdminOrderItem) => (
                     <div key={item.id}>
                       <div className="grid grid-cols-[64px_1fr] gap-3">
                         <div className="relative aspect-square overflow-hidden rounded-md bg-secondary">
