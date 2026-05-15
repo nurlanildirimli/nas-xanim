@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { requireUser, AuthError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -25,7 +24,9 @@ type CheckoutInput = z.infer<typeof checkoutSchema>;
 type CheckoutItem = CheckoutInput["items"][number];
 type CheckoutProduct = {
   id: string;
-  price: Prisma.Decimal;
+  price: {
+    toNumber(): number;
+  };
   stock: number;
   name: string;
 };
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     const total = input.items.reduce((sum: number, item: CheckoutItem) => {
       const product = productMap.get(item.productId);
-      return sum + Number(product?.price ?? 0) * item.quantity;
+      return sum + (product?.price.toNumber() ?? 0) * item.quantity;
     }, 0);
 
     const order = await prisma.$transaction(async (tx) => {
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
                 quantity: item.quantity,
                 size: item.size,
                 color: item.color,
-                price: product?.price ?? "0",
+                price: product?.price.toNumber().toFixed(2) ?? "0.00",
               };
             }),
           },
