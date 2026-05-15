@@ -13,7 +13,7 @@ type RouteContext = {
   }>;
 };
 
-function getUploadthingKeyFromUrl(value: string) {
+function getUploadthingKeyFromUrl(value: string): string | null {
   try {
     const url = new URL(value);
     const fileMarkerIndex = url.pathname.split("/").findIndex((part) => part === "f");
@@ -85,8 +85,8 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     const uploadthingKeys = Array.from(
       new Set(
         product.images
-          .map(getUploadthingKeyFromUrl)
-          .filter((key): key is string => Boolean(key)),
+          .map((image: string) => getUploadthingKeyFromUrl(image))
+          .filter((key: string | null): key is string => Boolean(key)),
       ),
     );
     let cleanupWarning: string | null = null;
