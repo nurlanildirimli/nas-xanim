@@ -97,7 +97,7 @@ export const getProductBySlug = cache(async (slug: string): Promise<ProductSumma
   return product ? toProductSummary(product) : null;
 });
 
-export const getProductSlugs = cache(async () => {
+export const getProductSlugs = cache(async (): Promise<Array<{ slug: string }>> => {
   return prisma.product.findMany({
     select: {
       slug: true,
