@@ -29,6 +29,20 @@ function getUploadthingKeyFromUrl(value: string): string | null {
   }
 }
 
+function getUniqueUploadthingKeys(images: string[]): string[] {
+  const keys: string[] = [];
+
+  for (const image of images) {
+    const key = getUploadthingKeyFromUrl(image);
+
+    if (key && !keys.includes(key)) {
+      keys.push(key);
+    }
+  }
+
+  return keys;
+}
+
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     await requireAdmin(request);
@@ -82,13 +96,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
         images: true,
       },
     });
-    const uploadthingKeys = Array.from(
-      new Set(
-        product.images
-          .map((image: string) => getUploadthingKeyFromUrl(image))
-          .filter((key: string | null): key is string => Boolean(key)),
-      ),
-    );
+    const uploadthingKeys = getUniqueUploadthingKeys(product.images);
     let cleanupWarning: string | null = null;
 
     if (uploadthingKeys.length > 0) {
