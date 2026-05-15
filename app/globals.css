@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: #fff8f7;
+  --foreground: #2a0b12;
+  --card: #ffffff;
+  --card-foreground: #2a0b12;
+  --popover: #ffffff;
+  --popover-foreground: #2a0b12;
+  --primary: #7a1026;
+  --primary-foreground: #ffffff;
+  --secondary: #fde8ea;
+  --secondary-foreground: #7a1026;
+  --muted: #fff0f1;
+  --muted-foreground: #7f5962;
+  --accent: #d99aa7;
+  --accent-foreground: #ffffff;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #f1d9dd;
+  --input: #ead0d5;
+  --ring: #b66a7a;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  min-width: 320px;
+  font-size: 14px;
+  background:
+    radial-gradient(circle at top left, rgba(253, 232, 234, 0.8), transparent 34rem),
+    var(--background);
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
