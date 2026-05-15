@@ -20,6 +20,14 @@ export type ProductListingParams = {
   sort?: ProductSort;
 };
 
+export type ProductFilterOptions = {
+  categories: CategorySummary[];
+  sizes: string[];
+  colors: string[];
+  minPrice: number;
+  maxPrice: number;
+};
+
 async function getProductsFromDb() {
   return prisma.product.findMany({
     include: {
@@ -122,7 +130,7 @@ function getProductOrderBy(sort: ProductSort | undefined): Prisma.ProductOrderBy
   }
 }
 
-export const getProductListing = cache(async (params: ProductListingParams) => {
+export const getProductListing = cache(async (params: ProductListingParams): Promise<ProductSummary[]> => {
   const where: Prisma.ProductWhereInput = {};
 
   if (params.category) {
@@ -165,7 +173,7 @@ export const getProductListing = cache(async (params: ProductListingParams) => {
   return products.map(toProductSummary);
 });
 
-export const getProductFilterOptions = cache(async () => {
+export const getProductFilterOptions = cache(async (): Promise<ProductFilterOptions> => {
   const [categories, products] = await Promise.all([
     getHomeCategories(),
     prisma.product.findMany({
