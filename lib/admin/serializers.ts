@@ -1,6 +1,37 @@
-import type { Category, Product } from "@prisma/client";
+type DecimalLike = {
+  toNumber(): number;
+};
 
-export function serializeCategory(category: Category & { _count?: { products: number } }) {
+type AdminCategoryRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string | null;
+  createdAt: Date;
+  _count?: {
+    products: number;
+  };
+};
+
+type AdminProductRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  price: DecimalLike;
+  images: string[];
+  categoryId: string;
+  category: {
+    name: string;
+  };
+  sizes: string[];
+  colors: string[];
+  colorHex: string[];
+  stock: number;
+  isNew: boolean;
+  createdAt: Date;
+};
+
+export function serializeCategory(category: AdminCategoryRecord) {
   return {
     id: category.id,
     name: category.name,
@@ -11,7 +42,7 @@ export function serializeCategory(category: Category & { _count?: { products: nu
   };
 }
 
-export function serializeProduct(product: Product & { category: { name: string } }) {
+export function serializeProduct(product: AdminProductRecord) {
   return {
     id: product.id,
     name: product.name,

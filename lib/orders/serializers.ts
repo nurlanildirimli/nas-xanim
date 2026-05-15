@@ -1,10 +1,35 @@
-import type { Order, OrderItem, Product, User } from "@prisma/client";
+type DecimalLike = {
+  toNumber(): number;
+};
 
-type OrderWithDetails = Order & {
-  user: Pick<User, "email" | "name">;
+type OrderWithDetails = {
+  id: string;
+  status: string;
+  total: DecimalLike;
+  createdAt: Date;
+  customerName: string;
+  phone: string;
+  addressLine: string;
+  city: string;
+  postalCode: string | null;
+  note: string | null;
+  user: {
+    email: string;
+    name: string | null;
+  };
   items: Array<
-    OrderItem & {
-      product: Pick<Product, "name" | "slug" | "images">;
+    {
+      id: string;
+      productId: string;
+      quantity: number;
+      size: string;
+      color: string;
+      price: DecimalLike;
+      product: {
+        name: string;
+        slug: string;
+        images: string[];
+      };
     }
   >;
 };

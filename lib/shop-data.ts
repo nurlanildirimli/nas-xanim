@@ -1,5 +1,4 @@
 import { cache } from "react";
-import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { CategorySummary, ProductSummary } from "@/types";
 
@@ -10,6 +9,22 @@ const fallbackProductImage =
 
 type ProductWithCategory = Awaited<ReturnType<typeof getProductsFromDb>>[number];
 export type ProductSort = "newest" | "price-asc" | "price-desc" | "name-asc";
+type ProductWhereInput = {
+  category?: {
+    slug: string;
+  };
+  sizes?: {
+    hasSome: string[];
+  };
+  colors?: {
+    hasSome: string[];
+  };
+  price?: {
+    gte?: number;
+    lte?: number;
+  };
+};
+type ProductOrderBy = Array<Record<string, "asc" | "desc">>;
 
 export type ProductListingParams = {
   category?: string;
@@ -116,7 +131,7 @@ export const getProductSlugs = cache(async (): Promise<Array<{ slug: string }>> 
   });
 });
 
-function getProductOrderBy(sort: ProductSort | undefined): Prisma.ProductOrderByWithRelationInput[] {
+function getProductOrderBy(sort: ProductSort | undefined): ProductOrderBy {
   switch (sort) {
     case "price-asc":
       return [{ price: "asc" }];
@@ -131,7 +146,7 @@ function getProductOrderBy(sort: ProductSort | undefined): Prisma.ProductOrderBy
 }
 
 export const getProductListing = cache(async (params: ProductListingParams): Promise<ProductSummary[]> => {
-  const where: Prisma.ProductWhereInput = {};
+  const where: ProductWhereInput = {};
 
   if (params.category) {
     where.category = {
